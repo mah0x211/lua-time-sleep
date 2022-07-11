@@ -42,14 +42,14 @@ static int nanosleep_lua(lua_State *L)
             return 1;
         } else if (errno == EINTR) {
             lua_pushnumber(L, (double)rem.tv_sec + ((double)rem.tv_nsec / 1e9));
-        } else {
-            lua_pushnumber(L, -1);
+            return 1;
         }
+        lua_pushnumber(L, sec);
         lua_errno_new(L, errno, "nanosleep");
         return 2;
     }
 
-    lua_pushinteger(L, 0);
+    lua_pushnumber(L, 0);
     return 1;
 }
 
