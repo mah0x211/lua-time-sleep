@@ -19,16 +19,50 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
-#include "lua_nanosleep.h"
 
-static int nanosleep_lua(lua_State *L)
-{
-    return nsleep_lua(L, NSEC);
-}
+#ifndef lua_nanosleep_h
+#define lua_nanosleep_h
 
-LUALIB_API int luaopen_nanosleep(lua_State *L)
+#include <errno.h>
+#include <math.h>
+#include <time.h>
+// lua
+#include <lauxhlib.h>
+#include <lua_errno.h>
+#include <sys/time.h>
+
+#define NSEC 1
+#define USEC (NSEC * 1000)
+#define MSEC (USEC * 1000)
+#define SEC  (MSEC * 1000)
+
+static inline int nsleep_lua(lua_State *L, int64_t unit)
 {
-    lua_errno_loadlib(L);
-    lua_pushcfunction(L, nanosleep_lua);
+    int64_t sec = lauxh_checknumber(L, 1) * unit;
+
+    if (sec > 0) {
+        struct timespec ts = {
+            .tv_sec  = sec / SEC,
+            .tv_nsec = sec % SEC,
+        };
+        struct timespec rem = {0};
+
+        if (nanosleep(&ts, &rem) == 0) {
+            lua_pushinteger(L, 0);
+            return 1;
+        } else if (errno == EINTR) {
+            lua_pushinteger(L,
+                            llround((double)(rem.tv_sec * SEC + rem.tv_nsec) /
+                                    (double)unit));
+            return 1;
+        }
+        lua_pushnil(L);
+        lua_errno_new(L, errno, "nanosleep");
+        return 2;
+    }
+
+    lua_pushinteger(L, 0);
     return 1;
 }
+
+#endif
