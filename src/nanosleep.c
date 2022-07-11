@@ -25,23 +25,27 @@
 #include <lauxhlib.h>
 #include <lua_errno.h>
 
-static int nanosleep_lua(lua_State *L)
+#define NSEC 1
+#define USEC (NSEC * 1000)
+#define MSEC (USEC * 1000)
+#define SEC  (MSEC * 1000)
+
+static inline int nsleep_lua(lua_State *L, int64_t unit)
 {
-    lua_Number sec = lauxh_checknumber(L, 1);
+    int64_t sec = lauxh_checkinteger(L, 1) * unit;
 
     if (sec > 0) {
-        lua_Integer tv_sec = sec;
         struct timespec ts = {
-            .tv_sec  = tv_sec,
-            .tv_nsec = (sec - (lua_Number)tv_sec) * 1e9,
+            .tv_sec  = sec / SEC,
+            .tv_nsec = sec % SEC,
         };
         struct timespec rem = {0};
 
         if (nanosleep(&ts, &rem) == 0) {
-            lua_pushnumber(L, 0);
+            lua_pushinteger(L, 0);
             return 1;
         } else if (errno == EINTR) {
-            lua_pushnumber(L, (double)rem.tv_sec + ((double)rem.tv_nsec / 1e9));
+            lua_pushinteger(L, (rem.tv_sec * SEC + rem.tv_nsec) / unit);
             return 1;
         }
         lua_pushnil(L);
@@ -49,8 +53,13 @@ static int nanosleep_lua(lua_State *L)
         return 2;
     }
 
-    lua_pushnumber(L, 0);
+    lua_pushinteger(L, 0);
     return 1;
+}
+
+static int nanosleep_lua(lua_State *L)
+{
+    return nsleep_lua(L, NSEC);
 }
 
 LUALIB_API int luaopen_nanosleep(lua_State *L)

@@ -5,23 +5,25 @@ local nanosleep = require('nanosleep')
 local function test_nanosleep()
     -- test that sleep for a specified number of seconds
     local elapsed = clock_gettime()
-    local res, err = nanosleep(1.5)
+    local res, err = nanosleep(1000 * 1000)
     elapsed = clock_gettime() - elapsed
     assert.equal(res, 0)
     assert.is_nil(err)
-    assert.equal(math.floor(elapsed * 100), 150)
+    assert.greater(elapsed, 0.001)
+    assert.less(elapsed, 0.0015)
 
     -- test that negative seconds treat as 0
     elapsed = clock_gettime()
-    res, err = nanosleep(-1.5)
+    res, err = nanosleep(-1)
     elapsed = clock_gettime() - elapsed
     assert.equal(res, 0)
     assert.is_nil(err)
-    assert.equal(math.floor(elapsed * 100), 0)
+    elapsed = elapsed
+    assert.less(elapsed, 0.0001)
 
     -- test that throws an error if seconds is negative number
     err = assert.throws(nanosleep, '1.5')
-    assert.match(err, 'number expected,')
+    assert.match(err, 'integer expected,')
 end
 
 for name, f in pairs({
