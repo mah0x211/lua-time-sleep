@@ -17,24 +17,24 @@ luarocks install nanosleep
 the following functions return the `error` object created by https://github.com/mah0x211/lua-errno module.
 
 
-## rem, err = nanosleep( sec )
+## rem, err = nanosleep( nsec )
 
-this function suspends execution of the calling thread until either `sec` seconds have elapsed or a signal is delivered to the thread and its action is to invoke a signal-catching function or to terminate the process.
+this function suspends execution of the calling thread until either `nsec` nanoseconds have elapsed or a signal is delivered to the thread and its action is to invoke a signal-catching function or to terminate the process.
 
-if the call is interrupted by a signal handler, it returns the `rem` remaining seconds greater than `0`.
+if the call is interrupted by a signal handler, it returns the `rem` remaining nanoseconds greater than `0`.
 
 ```lua
 local nanosleep = require('nanosleep')
-local rem, err = nanosleep(1.5) -- sleep for 1.5 seconds
+local rem, err = nanosleep(15*1e9) -- sleep for 1.5 seconds
 print(rem, err) -- 0.0 nil
 ```
 
 **Parameters**
 
-- `sec:number`: seconds.
+- `nsec:integer`: nanoseconds.
 
 **Returns**
 
-- `rem:number`: remaining seconds, or `nil` if an error other than `EINTR` occurs.
+- `rem:integer`: remaining nanoseconds, or `nil` if an error other than `EINTR` occurs.
 - `err:error`: error object.
 
