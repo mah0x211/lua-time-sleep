@@ -2,6 +2,7 @@ local assert = require('assert')
 local clock_gettime = require('clock').gettime
 local nanosleep = require('nanosleep')
 local usleep = require('nanosleep.usleep')
+local msleep = require('nanosleep.msleep')
 
 local testcase = {}
 
@@ -40,9 +41,21 @@ function testcase.usleep()
     assert.less(elapsed, 0.015)
 end
 
+function testcase.msleep()
+    -- test that sleep for a specified number of seconds
+    local elapsed = clock_gettime()
+    local res, err = msleep(10)
+    elapsed = clock_gettime() - elapsed
+    assert.equal(res, 0)
+    assert.is_nil(err)
+    assert.greater(elapsed, 0.01)
+    assert.less(elapsed, 0.015)
+end
+
 for _, name in ipairs({
     'nanosleep',
     'usleep',
+    'msleep',
 }) do
     local ok, err = xpcall(testcase[name], debug.traceback)
     if ok then

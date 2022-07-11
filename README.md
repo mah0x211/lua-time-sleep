@@ -59,3 +59,22 @@ print(rem, err) -- 0.0 nil
 - `err:error`: error object.
 
 
+## rem, err = msleep( msec )
+
+this function equivalent to `usleep(usec * 1000)`.
+
+```lua
+local msleep = require('nanosleep.msleep')
+local rem, err = msleep(15*1e2) -- sleep for 1.5 seconds
+print(rem, err) -- 0.0 nil
+```
+
+**Parameters**
+
+- `msec:integer`: milliseconds.
+
+**Returns**
+
+- `rem:integer`: remaining milliseconds, or `nil` if an error other than `EINTR` occurs.
+- `err:error`: error object.
+
