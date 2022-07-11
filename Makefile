@@ -1,7 +1,7 @@
-TARGET=nanosleep.$(LIB_EXTENSION)
-SRCS=$(wildcard $(SRCDIR)/*.c)
-OBJS=$(SRCS:.c=.o)
-GCDAS=$(OBJS:.o=.gcda)
+TARGET=src/nanosleep.$(LIB_EXTENSION)
+SRCS=$(wildcard src/*.c)
+OBJS=$(SRCS:.c=.$(LIB_EXTENSION))
+GCDAS=$(OBJS:.so=.gcda)
 INSTALL?=install
 
 ifdef NANOSLEEP_COVERAGE
@@ -10,15 +10,18 @@ endif
 
 .PHONY: all install
 
-all: $(TARGET)
+all: $(OBJS)
 
 %.o: %.c
 	$(CC) $(CFLAGS) $(WARNINGS) $(COVFLAGS) $(CPPFLAGS) -o $@ -c $<
 
-$(TARGET): $(OBJS)
+%.$(LIB_EXTENSION): %.o
 	$(CC) -o $@ $^ $(LDFLAGS) $(LIBS) $(PLATFORM_LDFLAGS) $(COVFLAGS)
 
-install:
-	$(INSTALL) -d $(INST_LIBDIR)
+install: $(OBJS)
+	$(INSTALL) -d $(INST_LIBDIR)/nanosleep
 	$(INSTALL) $(TARGET) $(INST_LIBDIR)
-	rm -f $(OBJS) $(TARGET) $(GCDAS)
+	$(INSTALL) $(filter-out $(TARGET), $(OBJS)) $(INST_LIBDIR)/nanosleep
+	rm -f ./src/*.o
+	rm -f ./src/*.$(LIB_EXTENSION)
+

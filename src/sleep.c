@@ -21,14 +21,14 @@
  */
 #include "lua_nanosleep.h"
 
-static int nanosleep_lua(lua_State *L)
+static int sleep_lua(lua_State *L)
 {
-    return nsleep_lua(L, NSEC);
+    return nsleep_lua(L, SEC);
 }
 
-LUALIB_API int luaopen_nanosleep(lua_State *L)
+LUALIB_API int luaopen_nanosleep_sleep(lua_State *L)
 {
     lua_errno_loadlib(L);
-    lua_pushcfunction(L, nanosleep_lua);
+    lua_pushcfunction(L, sleep_lua);
     return 1;
 }
