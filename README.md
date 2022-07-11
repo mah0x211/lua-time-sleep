@@ -35,6 +35,6 @@ print(rem, err) -- 0.0 nil
 
 **Returns**
 
-- `rem:number`: remaining seconds.
+- `rem:number`: remaining seconds, or `nil` if an error other than `EINTR` occurs.
 - `err:error`: error object.
 

@@ -44,7 +44,7 @@ static int nanosleep_lua(lua_State *L)
             lua_pushnumber(L, (double)rem.tv_sec + ((double)rem.tv_nsec / 1e9));
             return 1;
         }
-        lua_pushnumber(L, sec);
+        lua_pushnil(L);
         lua_errno_new(L, errno, "nanosleep");
         return 2;
     }
