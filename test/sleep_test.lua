@@ -1,9 +1,9 @@
 local assert = require('assert')
 local clock_gettime = require('clock').gettime
-local nanosleep = require('nanosleep')
-local usleep = require('nanosleep.usleep')
-local msleep = require('nanosleep.msleep')
-local sleep = require('nanosleep.sleep')
+local nanosleep = require('time.sleep.nanosleep')
+local usleep = require('time.sleep.usleep')
+local msleep = require('time.sleep.msleep')
+local sleep = require('time.sleep')
 
 local testcase = {}
 

@@ -26,7 +26,7 @@ static int nanosleep_lua(lua_State *L)
     return nsleep_lua(L, NSEC);
 }
 
-LUALIB_API int luaopen_nanosleep(lua_State *L)
+LUALIB_API int luaopen_time_sleep_nanosleep(lua_State *L)
 {
     lua_errno_loadlib(L);
     lua_pushcfunction(L, nanosleep_lua);

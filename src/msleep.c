@@ -26,7 +26,7 @@ static int msleep_lua(lua_State *L)
     return nsleep_lua(L, MSEC);
 }
 
-LUALIB_API int luaopen_nanosleep_msleep(lua_State *L)
+LUALIB_API int luaopen_time_sleep_msleep(lua_State *L)
 {
     lua_errno_loadlib(L);
     lua_pushcfunction(L, msleep_lua);
