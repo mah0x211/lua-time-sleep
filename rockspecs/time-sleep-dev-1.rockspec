@@ -1,3 +1,4 @@
+rockspec_format = "3.0"
 package = "time-sleep"
 version = "dev-1"
 source = {
@@ -14,19 +15,51 @@ dependencies = {
     "errno >= 0.3.0",
     "lauxhlib >= 0.5.0",
 }
+build_dependencies = {
+    "luarocks-build-hooks >= 0.7.0",
+}
 build = {
-    type = "make",
-    build_variables = {
-        CFLAGS = "$(CFLAGS)",
-        WARNINGS = "-Wall -Wno-trigraphs -Wmissing-field-initializers -Wreturn-type -Wmissing-braces -Wparentheses -Wno-switch -Wunused-function -Wunused-label -Wunused-parameter -Wunused-variable -Wunused-value -Wuninitialized -Wunknown-pragmas -Wshadow -Wsign-compare",
-        CPPFLAGS = "-I$(LUA_INCDIR)",
-        LDFLAGS = "$(LIBFLAG)",
-        LIB_EXTENSION = "$(LIB_EXTENSION)",
-        TIME_SLEEP_COVERAGE = "$(TIME_SLEEP_COVERAGE)",
+    type = "hooks",
+    before_build = {
+        "$(extra-vars)",
     },
-    install_variables = {
-        SRCDIR = "src",
-        INST_LIBDIR = "$(LIBDIR)/time/",
-        LIB_EXTENSION = "$(LIB_EXTENSION)",
+    extra_variables = {
+        CFLAGS = "-Wall -Wno-trigraphs -Wmissing-field-initializers -Wreturn-type -Wmissing-braces -Wparentheses -Wno-switch -Wunused-function -Wunused-label -Wunused-parameter -Wunused-variable -Wunused-value -Wuninitialized -Wunknown-pragmas -Wshadow -Wsign-compare",
+    },
+    conditional_variables = {
+        TIME_SLEEP_COVERAGE = {
+            CFLAGS = "--coverage",
+            LIBFLAG = "--coverage",
+        },
+    },
+    modules = {
+        ["time.sleep"] = {
+            sources = "src/sleep.c",
+            incdirs = {
+                "$(DEP_ERRNO_INCDIR)",
+                "$(DEP_LAUXHLIB_INCDIR)",
+            },
+        },
+        ["time.sleep.msleep"] = {
+            sources = "src/msleep.c",
+            incdirs = {
+                "$(DEP_ERRNO_INCDIR)",
+                "$(DEP_LAUXHLIB_INCDIR)",
+            },
+        },
+        ["time.sleep.nanosleep"] = {
+            sources = "src/nanosleep.c",
+            incdirs = {
+                "$(DEP_ERRNO_INCDIR)",
+                "$(DEP_LAUXHLIB_INCDIR)",
+            },
+        },
+        ["time.sleep.usleep"] = {
+            sources = "src/usleep.c",
+            incdirs = {
+                "$(DEP_ERRNO_INCDIR)",
+                "$(DEP_LAUXHLIB_INCDIR)",
+            },
+        },
     },
 }
