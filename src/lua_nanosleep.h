@@ -23,13 +23,13 @@
 #ifndef lua_nanosleep_h
 #define lua_nanosleep_h
 
+// depend
+#include <lauxhlib.h>
+#include <lua_errno.h>
+// system
 #include <errno.h>
 #include <math.h>
 #include <time.h>
-// lua
-#include <lauxhlib.h>
-#include <lua_errno.h>
-#include <sys/time.h>
 
 #define NSEC 1
 #define USEC (NSEC * 1000)
